@@ -1,0 +1,43 @@
+		.MODEL SMALL
+        .STACK 64
+
+        .DATA
+GRDS        DB  81,65,77,82,73,55,88,78,51,91,86,76
+NEW_GRDS    DB  12 DUP(?) ;REPLACE 12 WITH THE COUNT OF THE GIVEN DATASET OF BYTES
+
+        .CODE
+MAIN	PROC	FAR
+        MOV	AX,@DATA
+        MOV	DS,AX
+        MOV SI,OFFSET GRDS
+        MOV DI,OFFSET NEW_GRDS
+        MOV AH,99
+        MOV CX,12
+        CALL F_MAX
+        SUB AH,AL
+        
+        MOV CX,12
+        MOV SI,OFFSET GRDS
+NG_LP:  MOV AL,[SI]
+        ADD AL,AH
+        MOV [DI],AL
+        INC SI
+        INC DI
+        DEC CX
+        JNZ NG_LP
+        MOV AH,4CH
+        INT 21H
+MAIN	ENDP
+
+F_MAX   PROC ;STARTS FROM THE OFFSET GIVEN IN SI, WITH THE COUNT GIVEN IN CX, THEN STORES RESULT IN AL
+        MOV AL,0H
+MAX_LP: CMP AL,[SI]
+        JNC GO_ON
+        MOV AL,[SI]
+GO_ON:  INC SI
+        DEC CX
+        JNZ MAX_LP
+        RET
+F_MAX   ENDP
+
+END		MAIN
